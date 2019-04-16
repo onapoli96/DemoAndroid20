@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.orlando.demoandroid20.MainActivity">
+
+    <LinearLayout
+        android:layout_width="368dp"
+        android:layout_height="503dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Client:"
+            tools:layout_editor_absoluteX="173dp"
+            tools:layout_editor_absoluteY="179dp" />
+
+        <TextView
+            android:id="@+id/dataReceived"
+            android:layout_width="265dp"
+            android:layout_height="67dp"
+            android:text="TextView"
+            tools:layout_editor_absoluteX="60dp"
+            tools:layout_editor_absoluteY="231dp" />
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Publischer:"
+            tools:layout_editor_absoluteX="173dp"
+            tools:layout_editor_absoluteY="179dp" />
+        <EditText
+            android:id="@+id/dataInviated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="invia"
+            android:text="Publica" />
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Valore Segnale:"
+            tools:layout_editor_absoluteX="173dp"
+            tools:layout_editor_absoluteY="179dp" />
+
+        <TextView
+            android:id="@+id/segnaleReceived"
+            android:layout_width="265dp"
+            android:layout_height="67dp"
+            android:text="TextView"
+            tools:layout_editor_absoluteX="60dp"
+            tools:layout_editor_absoluteY="231dp" />
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="inviaSegnale"
+            android:text="Publica" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/startReadingBeaconsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="@android:color/holo_green_light"
+                android:enabled="true"
+                android:text="@string/start_button_text"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/stopReadingBeaconsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:alpha="0.5"
+                android:background="@android:color/holo_red_light"
+                android:enabled="false"
+                android:text="@string/stop_button_text"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

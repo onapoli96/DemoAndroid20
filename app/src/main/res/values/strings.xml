@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Demo Android</string>
+    <string name="start_button_text">Inizio</string>
+    <string name="stop_button_text">Stop</string>
+    <string name="location_access_needed">Abbiamo bisogno della posizione</string>
+    <string name="grant_location_access">Per piacere attiva la posizione</string>
+    <string name="not_support_bluetooth_msg">Questo dispositivo non supporta il bluetooth</string>
+    <string name="cancel_button_text">Cancella</string>
+    <string name="location_disabled">Locazione disattivata</string>
+    <string name="location_settings">Aggiusta la locazione</string>
+    <string name="location_not_granted">Non hai concesso la posizione all app</string>
+    <string name="cannot_discover_beacons">questa app non ha trovato beacon</string>
+    <string name="funcionality_limited">funzionalità limitata</string>
+    <string name="no_bluetooth_msg">Devi attivare il bluetooth</string>
+    <string name="start_looking_for_beacons">Cercando beacon</string>
+    <string name="stop_looking_for_beacons">Ho smesso di cercare beacon</string>
+    <string name="no_beacons_detected">Nessun beacon trovato</string>
+    <string name="beacon_detected">Ho trovato il beacon con id %1$s !</string>
+</resources>
