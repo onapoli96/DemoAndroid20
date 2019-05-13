@@ -40,7 +40,7 @@ import java.util.Collection;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, BeaconConsumer,
         RangeNotifier {
-/*Ciao gio*/
+/*Ciao gio non funziona*/
     MqttHelper mqttHelper;
 
     TextView dataReceived;
