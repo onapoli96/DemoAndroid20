@@ -1,6 +1,7 @@
 package com.example.orlando.demoandroid20;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -38,11 +40,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, BeaconConsumer,
+public class MainActivity extends AppCompatActivity implements  BeaconConsumer,
         RangeNotifier {
-/*Ciao gio non funziona*/
-    MqttHelper mqttHelper;
 
+    MqttHelper mqttHelper;
     TextView dataReceived;
     TextView segnaleReceived;
     EditText dataInviated;
@@ -53,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
 
     private BeaconManager mBeaconManager;
-
+    private Button startReadingBeaconsButton;
+    private Button stopReadingBeaconsButton;
     private Region mRegion;
 
     @Override
@@ -65,9 +67,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         segnaleReceived = (TextView) findViewById(R.id.segnaleReceived);
 
         startMqtt();
-
-        getStartButton().setOnClickListener(this);
-        getStopButton().setOnClickListener(this);
+        startReadingBeaconsButton = (Button) findViewById(R.id.startReadingBeaconsButton);
+        stopReadingBeaconsButton = (Button) findViewById(R.id.stopReadingBeaconsButton);
 
         mBeaconManager = BeaconManager.getInstanceForApplication(this);
 
@@ -77,67 +78,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ArrayList<Identifier> identifiers = new ArrayList<>();
 
         mRegion = new Region(ALL_BEACONS_REGION, identifiers);
-    }
-
-    @Override
-    public void onClick(View view) {
-
-        if (view.equals(findViewById(R.id.startReadingBeaconsButton))) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED) {
-
-                    askForLocationPermissions();
-
-                } else {
-
-                    prepareDetection();
-                }
-
-            } else {
-
-                prepareDetection();
-            }
-
-        } else if (view.equals(findViewById(R.id.stopReadingBeaconsButton))) {
-
-            stopDetectingBeacons();
-
-            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-
-            if (mBluetoothAdapter.isEnabled()) {
-                mBluetoothAdapter.disable();
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            askForLocationPermissions();
         }
-    }
 
+    }
 
     private void prepareDetection() {
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if (!isLocationEnabled()) {
-
-            askToTurnOnLocation();
-
-        } else {
-
-            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-            if (mBluetoothAdapter == null) {
-
-                showToastMessage(getString(R.string.not_support_bluetooth_msg));
-
-            } else if (mBluetoothAdapter.isEnabled()) {
-
-                startDetectingBeacons();
-
-            } else {
-
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
-            }
+        if (mBluetoothAdapter == null) {
+            showToastMessage(getString(R.string.not_support_bluetooth_msg));
+        }
+        else if (mBluetoothAdapter.isEnabled()) {
+            startDetectingBeacons();
+        }
+        else {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
         }
     }
 
@@ -159,22 +117,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
     private void startDetectingBeacons() {
-
-
         mBeaconManager.setForegroundScanPeriod(DEFAULT_SCAN_PERIOD_MS);
-
-
         mBeaconManager.bind(this);
 
+        startReadingBeaconsButton.setEnabled(false);
+        startReadingBeaconsButton.setAlpha(.5f);
 
-        getStartButton().setEnabled(false);
-        getStartButton().setAlpha(.5f);
-
-
-        getStopButton().setEnabled(true);
-        getStopButton().setAlpha(1);
+        stopReadingBeaconsButton.setEnabled(true);
+        stopReadingBeaconsButton.setAlpha(1);
     }
 
     @Override
@@ -191,8 +142,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mBeaconManager.addRangeNotifier(this);
     }
-
-
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
@@ -222,44 +171,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mBeaconManager.unbind(this);
 
-        getStartButton().setEnabled(true);
-        getStartButton().setAlpha(1);
+        startReadingBeaconsButton.setEnabled(true);
+        startReadingBeaconsButton.setAlpha(1);
 
-        getStopButton().setEnabled(false);
-        getStopButton().setAlpha(.5f);
+        stopReadingBeaconsButton.setEnabled(false);
+        stopReadingBeaconsButton.setAlpha(.5f);
     }
 
-    /**
-     * Comprobar permisión de localización para Android >= M
-     */
-    private void askForLocationPermissions() {
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+   @RequiresApi(api = Build.VERSION_CODES.M)
+   private void askForLocationPermissions() {
+
+        /*final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.location_access_needed);
         builder.setMessage(R.string.grant_location_access);
         builder.setPositiveButton(android.R.string.ok, null);
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
-            public void onDismiss(DialogInterface dialog) {
+            public void onDismiss(DialogInterface dialog) {*/
                 requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         PERMISSION_REQUEST_COARSE_LOCATION);
-            }
+            /*}
         });
-        builder.show();
+        builder.show();*/
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_COARSE_LOCATION: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    prepareDetection();
+
                 } else {
+
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle(R.string.funcionality_limited);
-                    builder.setMessage(getString(R.string.location_not_granted) +
-                            getString(R.string.cannot_discover_beacons));
+                    builder.setMessage(getString(R.string.location_not_granted));
                     builder.setPositiveButton(android.R.string.ok, null);
                     builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
@@ -268,55 +217,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
                     builder.show();
+                    askForLocationPermissions();
                 }
                 return;
             }
         }
-    }
-
-
-    private boolean isLocationEnabled() {
-
-        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        boolean networkLocationEnabled = false;
-
-        boolean gpsLocationEnabled = false;
-
-        try {
-            networkLocationEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-            gpsLocationEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        } catch (Exception ex) {
-            Log.d(TAG, "Exception!");
-        }
-
-        return networkLocationEnabled || gpsLocationEnabled;
-    }
-
-
-    private void askToTurnOnLocation() {
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage(R.string.location_disabled);
-        dialog.setPositiveButton(R.string.location_settings, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                // TODO Auto-generated method stub
-                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(myIntent);
-            }
-        });
-        dialog.show();
-    }
-
-    private Button getStartButton() {
-        return (Button) findViewById(R.id.startReadingBeaconsButton);
-    }
-
-    private Button getStopButton() {
-        return (Button) findViewById(R.id.stopReadingBeaconsButton);
     }
 
 
@@ -368,6 +273,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void inviaSegnale(View v) throws MqttException {
         MqttMessage message = new MqttMessage(segnaleReceived.getText().toString().getBytes());
         mqttHelper.publica(message);
+    }
+
+    public void startDetectingBaconButton(View v){
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED) {
+
+                askForLocationPermissions();
+
+            } else {
+                prepareDetection();
+            }
+
+        } else {
+
+            prepareDetection();
+        }
+    }
+
+    public void stopDetectingBaconButton(View v){
+        stopDetectingBeacons();
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter.isEnabled()) {
+            mBluetoothAdapter.disable();
+        }
     }
 }
 

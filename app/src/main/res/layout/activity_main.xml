@@ -83,6 +83,7 @@
                 android:background="@android:color/holo_green_light"
                 android:enabled="true"
                 android:text="@string/start_button_text"
+                android:onClick="startDetectingBaconButton"
                 android:textColor="@android:color/white" />
 
             <Button
@@ -95,6 +96,7 @@
                 android:background="@android:color/holo_red_light"
                 android:enabled="false"
                 android:text="@string/stop_button_text"
+                android:onClick="stopDetectingBaconButton"
                 android:textColor="@android:color/white" />
         </LinearLayout>
     </LinearLayout>
