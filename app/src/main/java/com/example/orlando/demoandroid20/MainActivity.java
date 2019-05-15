@@ -36,12 +36,14 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 
-public class MainActivity extends AppCompatActivity implements  BeaconConsumer,
-        RangeNotifier {
+public class MainActivity extends AppCompatActivity implements  BeaconConsumer, RangeNotifier {
 
     MqttHelper mqttHelper;
     TextView dataReceived;
@@ -145,17 +147,23 @@ public class MainActivity extends AppCompatActivity implements  BeaconConsumer,
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-
+        String tutti = " ";
+        int i = 0;
         if (beacons.size() == 0) {
             showToastMessage(getString(R.string.no_beacons_detected));
         }
-
         for (Beacon beacon : beacons) {
             Log.d("bla", "ciao");
-            showToastMessage(getString(R.string.beacon_detected, beacon.getId1()));
-            showToastMessage("Si trova a questa distanza: " + beacon.getDistance());
-            segnaleReceived.setText(beacon.getId1().toString());
+            i++;
+            int distanza = (int)(beacon.getDistance() * 100);
+            tutti = tutti  +"ID: "+ beacon.getId2().toString() + " - distanza: "  + distanza+ "\n";
+
+            showToastMessage(getString(R.string.beacon_detected,  beacon.getId2().toString() +" - "+ i));
+            segnaleReceived.setText(tutti);
+            //segnaleReceived.setText(beacon.getBluetoothName() + beacon.getIdentifiers().toString());
         }
+
+
     }
 
     private void stopDetectingBeacons() {
@@ -181,19 +189,8 @@ public class MainActivity extends AppCompatActivity implements  BeaconConsumer,
 
    @RequiresApi(api = Build.VERSION_CODES.M)
    private void askForLocationPermissions() {
-
-        /*final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.location_access_needed);
-        builder.setMessage(R.string.grant_location_access);
-        builder.setPositiveButton(android.R.string.ok, null);
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            public void onDismiss(DialogInterface dialog) {*/
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         PERMISSION_REQUEST_COARSE_LOCATION);
-            /*}
-        });
-        builder.show();*/
     }
 
     @TargetApi(Build.VERSION_CODES.M)
