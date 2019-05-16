@@ -17,8 +17,10 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class BeaconHelper implements BeaconConsumer, RangeNotifier {
 
@@ -29,10 +31,15 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
     private static final long DEFAULT_SCAN_PERIOD_MS = 6000l;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
 
-    public BeaconHelper(Context context,TextView segnaleReceived) {
+    private int numActivity;
+
+    public BeaconHelper(Context context,TextView segnaleReceived, int numActivity) {
+
+        this.numActivity = numActivity;
 
         this.context = context;
         this.segnaleReceived = segnaleReceived;
+
         mBeaconManager = BeaconManager.getInstanceForApplication(context);
 
         mBeaconManager.getBeaconParsers().add(new BeaconParser().
@@ -88,15 +95,38 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
         if (beacons.size() == 0) {
             showToastMessage(context.getString(R.string.no_beacons_detected));
         }
-        for (Beacon beacon : beacons) {
-            Log.d("bla", "ciao");
-            i++;
-            int distanza = (int)(beacon.getDistance() * 100);
-            tutti = tutti  +"ID: "+ beacon.getId2().toString() + " - distanza: "  + distanza+ "\n";
+        if(numActivity == 0) {
+            for (Beacon beacon : beacons) {
+                Log.d("bla", "ciao");
+                i++;
+                int distanza = (int) (beacon.getDistance() * 100);
+                tutti = tutti + "ID: " + beacon.getId2().toString() + " - distanza: " + distanza + "\n";
 
-            showToastMessage(context.getString(R.string.beacon_detected,  beacon.getId2().toString() +" - "+ i));
-            segnaleReceived.setText(tutti);
+                segnaleReceived.setText(tutti);
+            }
         }
+        else if (numActivity == 1){
+            segnaleReceived.setText(""+getMinimumDistance(beacons));
+        }
+    }
+
+    private String getMinimumDistance(Collection <Beacon> beacons){
+        int min = 0;
+        String minBeacon = "";
+        boolean flag = true;
+        for(Beacon beacon: beacons){
+            if(flag){
+                min = (int)(beacon.getDistance() * 100);
+                minBeacon = beacon.getId2().toString();
+                flag = false;
+            }
+            if (((int)(beacon.getDistance() * 100)) < min){
+                min = (int)(beacon.getDistance() * 100);
+                minBeacon = beacon.getId2().toString();
+            }
+        }
+        return minBeacon;
+
     }
 
     public void stopDetectingBeacons() {
@@ -109,7 +139,6 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
         }
 
         mBeaconManager.removeAllRangeNotifiers();
-
         mBeaconManager.unbind(this);
     }
 
@@ -117,6 +146,7 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
         mBeaconManager.setForegroundScanPeriod(DEFAULT_SCAN_PERIOD_MS);
         mBeaconManager.bind(this);
     }
+
 
     public void clear(){
         mBeaconManager.removeAllRangeNotifiers();

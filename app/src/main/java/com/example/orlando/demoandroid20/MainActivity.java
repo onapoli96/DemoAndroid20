@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity  {
     TextView dataReceived;
     TextView segnaleReceived;
     EditText dataInviated;
-    protected final String TAG = MainActivity.this.getClass().getSimpleName();
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
 
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity  {
         segnaleReceived = (TextView) findViewById(R.id.segnaleReceived);
 
         startMqtt();
-        beaconHelper = new BeaconHelper(this, segnaleReceived);
+        beaconHelper = new BeaconHelper(this, segnaleReceived, 0);
         startReadingBeaconsButton = (Button) findViewById(R.id.startReadingBeaconsButton);
         stopReadingBeaconsButton = (Button) findViewById(R.id.stopReadingBeaconsButton);
 
@@ -60,8 +59,6 @@ public class MainActivity extends AppCompatActivity  {
         }
 
     }
-
-
 
     private boolean askForBluetooth(){
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -213,12 +210,12 @@ public class MainActivity extends AppCompatActivity  {
 
     public void stopDetectingBaconButton(View v){
         beaconHelper.stopDetectingBeacons();
-        /*BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter.isEnabled()) {
-            mBluetoothAdapter.disable();
-        }*/
-
         changeStartButtonColors(startReadingBeaconsButton, v);
+    }
+
+    public void goToTheMapButton(View v){
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
     }
 }
 

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.orlando.demoandroid20.MapActivity">
+
+    <LinearLayout
+        android:id="@+id/StarteStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/startReadingBeaconsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/holo_green_light"
+            android:enabled="true"
+            android:onClick="detectGio"
+            android:text="@string/start_button_text"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/stopReadingBeaconsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:alpha="0.5"
+            android:background="@android:color/holo_red_light"
+            android:enabled="false"
+            android:text="@string/stop_button_text"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+    <GridLayout
+        android:layout_below="@+id/StarteStop"
+        android:layout_centerInParent="true"
+        android:rowCount="2"
+        android:columnCount="2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/b149"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_red_light"
+            android:text="149"/>
+        <Button
+            android:id="@+id/b947"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_red_light"
+            android:text="947"/>
+        <Button
+            android:id="@+id/b649"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_red_light"
+            android:text="649"/>
+        <Button
+            android:id="@+id/b831"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_red_light"
+            android:text="831"/>
+    </GridLayout>
+    <TextView
+        android:id="@+id/hiddenTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        />
+</RelativeLayout>

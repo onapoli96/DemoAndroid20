@@ -99,5 +99,15 @@
                 android:onClick="stopDetectingBaconButton"
                 android:textColor="@android:color/white" />
         </LinearLayout>
+        <Button
+            android:id="@+id/goToTheMapButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_weight="1"
+            android:background="@android:color/holo_blue_bright"
+            android:text="Vai alla mappa"
+            android:onClick="goToTheMapButton"
+            android:textColor="@android:color/black" />
     </LinearLayout>
 </RelativeLayout>
