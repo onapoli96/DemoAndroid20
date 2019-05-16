@@ -6,6 +6,7 @@ import android.content.ServiceConnection;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
@@ -24,15 +25,14 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
     private BeaconManager mBeaconManager;
     private Region mRegion;
     private Context context;
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-    private static final int REQUEST_ENABLE_BLUETOOTH = 1;
+    private TextView segnaleReceived;
     private static final long DEFAULT_SCAN_PERIOD_MS = 6000l;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
 
-    public BeaconHelper(Context context) {
+    public BeaconHelper(Context context,TextView segnaleReceived) {
 
         this.context = context;
-
+        this.segnaleReceived = segnaleReceived;
         mBeaconManager = BeaconManager.getInstanceForApplication(context);
 
         mBeaconManager.getBeaconParsers().add(new BeaconParser().
@@ -41,7 +41,6 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
         ArrayList<Identifier> identifiers = new ArrayList<>();
 
         mRegion = new Region(ALL_BEACONS_REGION, identifiers);
-
     }
 
     private void showToastMessage (String message) {
@@ -72,25 +71,55 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
 
     @Override
     public void unbindService(ServiceConnection serviceConnection) {
-
+        context.unbindService(serviceConnection);
     }
 
     @Override
     public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
-        return false;
+        return context.bindService(intent,  serviceConnection, i);
+
     }
+
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+        String tutti = " ";
+        int i = 0;
         if (beacons.size() == 0) {
-            showToastMessage("Nessun beacon trovato");
+            showToastMessage(context.getString(R.string.no_beacons_detected));
         }
-
         for (Beacon beacon : beacons) {
             Log.d("bla", "ciao");
-            showToastMessage("Ho trovato il beacon con id %1$s " + beacon.getId1());
-            showToastMessage("Si trova a questa distanza: " + beacon.getDistance());
-            //segnaleReceived.setText(beacon.getId1().toString());
+            i++;
+            int distanza = (int)(beacon.getDistance() * 100);
+            tutti = tutti  +"ID: "+ beacon.getId2().toString() + " - distanza: "  + distanza+ "\n";
+
+            showToastMessage(context.getString(R.string.beacon_detected,  beacon.getId2().toString() +" - "+ i));
+            segnaleReceived.setText(tutti);
         }
+    }
+
+    public void stopDetectingBeacons() {
+
+        try {
+            mBeaconManager.stopMonitoringBeaconsInRegion(mRegion);
+            showToastMessage(context.getString(R.string.stop_looking_for_beacons));
+        } catch (RemoteException e) {
+            Log.d("Errore", "Errore: " + e.getMessage());
+        }
+
+        mBeaconManager.removeAllRangeNotifiers();
+
+        mBeaconManager.unbind(this);
+    }
+
+    public void startDetectingBeacons() {
+        mBeaconManager.setForegroundScanPeriod(DEFAULT_SCAN_PERIOD_MS);
+        mBeaconManager.bind(this);
+    }
+
+    public void clear(){
+        mBeaconManager.removeAllRangeNotifiers();
+        mBeaconManager.unbind(this);
     }
 }
