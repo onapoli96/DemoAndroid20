@@ -6,12 +6,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import org.altbeacon.beacon.RangeNotifier;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MapActivity extends AppCompatActivity implements TextWatcher {
 
@@ -21,6 +30,8 @@ public class MapActivity extends AppCompatActivity implements TextWatcher {
     private RangeNotifier rangeNotifier;
     private TextView hiddenTextView;
     private Button[] buttons;
+    MqttHelper mqttHelper;
+
 
 
     @Override
@@ -39,12 +50,27 @@ public class MapActivity extends AppCompatActivity implements TextWatcher {
         buttons[1] = (Button) findViewById(R.id.b649);
         buttons[2] = (Button) findViewById(R.id.b831);
         buttons[3] = (Button) findViewById(R.id.b947);
-
+        startMqtt();
 
     }
 
-    public void detectGio(View v){
+    public void detectBeaconInMap(View v){
         beaconHelper.startDetectingBeacons();
+        changeStartButtonColors(stopReadingBeaconsButton, v);
+    }
+
+    public void stopDetectBeaconInMap(View v){
+        beaconHelper.stopDetectingBeacons();
+        changeStartButtonColors(startReadingBeaconsButton, v);
+    }
+
+    private void changeStartButtonColors(View able, View disable){
+
+        able.setEnabled(true);
+        able.setAlpha(1);
+
+        disable.setEnabled(false);
+        disable.setAlpha(.5f);
     }
 
     public void changeColor(){
@@ -71,10 +97,49 @@ public class MapActivity extends AppCompatActivity implements TextWatcher {
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         changeColor();
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        inviaMessaggio("L'utente CELL ORLANDO è passato dal beacon con id: "+ hiddenTextView.getText()+" al tempo "+ dateFormat.format(date) );
+    }
+
+    private void inviaMessaggio(String messaggio){
+        MqttMessage message = new MqttMessage(messaggio.getBytes());
+        try {
+            mqttHelper.publica(message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void afterTextChanged(Editable editable) {
 
+    }
+
+    private void startMqtt() {
+        mqttHelper = new MqttHelper(getApplicationContext());
+
+        mqttHelper.setCallback(new MqttCallbackExtended() {
+            @Override
+            public void connectComplete(boolean b, String s) {
+
+            }
+
+            @Override
+            public void connectionLost(Throwable throwable) {
+
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+                Log.w("Debug", mqttMessage.toString());
+
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+
+            }
+        });
     }
 }

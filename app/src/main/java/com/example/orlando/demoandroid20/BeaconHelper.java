@@ -17,10 +17,8 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public class BeaconHelper implements BeaconConsumer, RangeNotifier {
 
@@ -28,7 +26,7 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
     private Region mRegion;
     private Context context;
     private TextView segnaleReceived;
-    private static final long DEFAULT_SCAN_PERIOD_MS = 6000l;
+    private static final long DEFAULT_SCAN_PERIOD_MS = 3000l;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
 
     private int numActivity;
@@ -111,17 +109,17 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
     }
 
     private String getMinimumDistance(Collection <Beacon> beacons){
-        int min = 0;
+        double min = 0.0;
         String minBeacon = "";
         boolean flag = true;
         for(Beacon beacon: beacons){
             if(flag){
-                min = (int)(beacon.getDistance() * 100);
+                min = beacon.getDistance();
                 minBeacon = beacon.getId2().toString();
                 flag = false;
             }
-            if (((int)(beacon.getDistance() * 100)) < min){
-                min = (int)(beacon.getDistance() * 100);
+            if (beacon.getDistance() < min){
+                min = beacon.getDistance();
                 minBeacon = beacon.getId2().toString();
             }
         }

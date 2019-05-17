@@ -22,12 +22,13 @@
             android:layout_weight="1"
             android:background="@android:color/holo_green_light"
             android:enabled="true"
-            android:onClick="detectGio"
+            android:onClick="detectBeaconInMap"
             android:text="@string/start_button_text"
             android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/stopReadingBeaconsButton"
+            android:onClick="stopDetectBeaconInMap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
