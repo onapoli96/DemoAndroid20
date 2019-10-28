@@ -8,7 +8,6 @@
 
 ## Documentation
 
-- [**STABLE**][docs-stable-url] &mdash; **documentation of the most recently tagged version.**
 - [**DEV**][docs-dev-url] &mdash; **documentation of the development version.**
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
