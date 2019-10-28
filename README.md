@@ -13,5 +13,5 @@
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-dev-url]: https://piebat.github.io/DemoAndroid20/dev
-[docs-stable-url]: https://piebat.github.io/DemoAndroid20/stable
+[docs-dev-url]: https://piebat.github.io/DemoAndroid20
+
